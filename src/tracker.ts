@@ -142,6 +142,11 @@ export class WhatsAppTracker {
             }
         });
 
+        // Listen for raw receipts to catch 'inactive' type which are ignored by Baileys
+        this.sock.ws.on('CB:receipt', (node: any) => {
+            this.handleRawReceipt(node);
+        });
+
         // Listen for presence updates
         this.sock.ev.on('presence.update', (update) => {
             trackerLogger.debug('[PRESENCE] Raw update received:', JSON.stringify(update, null, 2));
@@ -320,6 +325,56 @@ export class WhatsAppTracker {
     }
 
     /**
+     * Handle raw receipt nodes directly from the websocket
+     * This is necessary because Baileys ignores receipts with type="inactive"
+     */
+    private handleRawReceipt(node: any) {
+        try {
+            const { attrs } = node;
+            // We only care about 'inactive' receipts here
+            if (attrs.type === 'inactive') {
+                trackerLogger.debug(`[RAW RECEIPT] Received inactive receipt: ${JSON.stringify(attrs)}`);
+                
+                const msgId = attrs.id;
+                const fromJid = attrs.from;
+                
+                if (this.trackedJids.has(fromJid)) {
+                    this.processAck(msgId, fromJid, 'inactive');
+                }
+            }
+        } catch (err) {
+            trackerLogger.debug(`[RAW RECEIPT] Error handling receipt: ${err}`);
+        }
+    }
+
+    /**
+     * Process an ACK (receipt) from a device
+     */
+    private processAck(msgId: string, fromJid: string, type: string) {
+        trackerLogger.debug(`[ACK PROCESS] ID: ${msgId}, JID: ${fromJid}, Type: ${type}`);
+
+        if (!msgId || !fromJid) return;
+
+        // Check if this is one of our probes
+        const startTime = this.probeStartTimes.get(msgId);
+
+        if (startTime) {
+            const rtt = Date.now() - startTime;
+            trackerLogger.debug(`[TRACKING] ✅ ${type.toUpperCase()} received for ${msgId} from ${fromJid}, RTT: ${rtt}ms`);
+
+            // Clear timeout
+            const timeoutId = this.probeTimeouts.get(msgId);
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+                this.probeTimeouts.delete(msgId);
+            }
+
+            this.probeStartTimes.delete(msgId);
+            this.addMeasurementForDevice(fromJid, rtt);
+        }
+    }
+
+    /**
      * Analyze message update and calculate RTT
      * @param update Message update from WhatsApp
      */
@@ -335,24 +390,7 @@ export class WhatsAppTracker {
         // Only CLIENT ACK (3) means device is online and received the message
         // SERVER ACK (2) only means server received it, not the device
         if (status === 3) { // CLIENT ACK
-            const startTime = this.probeStartTimes.get(msgId);
-
-            if (startTime) {
-                const rtt = Date.now() - startTime;
-                trackerLogger.debug(`[TRACKING] ✅ CLIENT ACK received for ${msgId} from ${fromJid}, RTT: ${rtt}ms`);
-
-                // Clear timeout
-                const timeoutId = this.probeTimeouts.get(msgId);
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                    this.probeTimeouts.delete(msgId);
-                }
-
-                this.probeStartTimes.delete(msgId);
-                this.addMeasurementForDevice(fromJid, rtt);
-            } else {
-                trackerLogger.debug(`[TRACKING] ⚠️ CLIENT ACK for ${msgId} from ${fromJid} but no start time found (not our probe or already processed)`);
-            }
+            this.processAck(msgId, fromJid, 'client_ack');
         }
     }
 
